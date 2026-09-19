@@ -1,3 +1,3 @@
 TODO:
-- Implementar o css da tela de criação! (9)
-- Impedir entrada manual em outras páginas! (9)
+- Popular com texto e imagem final (10)
+- Conectar database

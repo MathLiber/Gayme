@@ -1,8 +1,10 @@
 <?php
+define('GAYME', true);
+
 session_start();
 
 require __DIR__ . '/Classes/Personagem.php';
-require __DIR__ . '/Classes/dado.php';
+require __DIR__ . '/Classes/Dado.php';
 require __DIR__ . '/Classes/Cena.php';
 
 if (isset($_POST['reiniciar'])) {
@@ -12,14 +14,15 @@ if (isset($_POST['reiniciar'])) {
     exit;
 }
 
+// Criação de personagem
 if (!isset($_SESSION['personagem'])) {
 
     $erroDistribuicao = null;
 
     if (isset($_POST['criar_personagem'])) {
-        $observacao = ($_POST['observacao'] ?? 0);
-        $destreza = ($_POST['destreza'] ?? 0);
-        $forca = ($_POST['forca'] ?? 0);
+        $observacao = (int) ($_POST['observacao'] ?? 0);
+        $destreza = (int) ($_POST['destreza'] ?? 0);
+        $forca = (int) ($_POST['forca'] ?? 0);
         $soma = $observacao + $destreza + $forca;
 
         if ($soma <= 5 && $observacao >= 0 && $destreza >= 0 && $forca >= 0) {
@@ -77,28 +80,30 @@ if (!isset($_SESSION['cena'])) {
     $_SESSION['cena'] = 'apresentacao_c1';
 }
 
+$nomeCena = $_SESSION['cena'];
+if (!is_file(__DIR__ . '/Cenas/' . $nomeCena . '.php')) {
+    $nomeCena = 'apresentacao_c1';
+    $_SESSION['cena'] = $nomeCena;
+}
+
+$cena = include __DIR__ . '/Cenas/' . $nomeCena . '.php';
+
 // Botão Continuar
-if (isset($_POST['ir'])) {
-    $_SESSION['cena'] = $_POST['ir'];
+if (isset($_POST['continuar']) && $cena->proxima !== null) {
+    $_SESSION['cena'] = $cena->proxima;
     header('Location: index.php');
     exit;
 }
 
 // Botão Rolar
-if (isset($_POST['rolar'])) {
-    $cenaAtual = include __DIR__ . '/Cenas/' . $_SESSION['cena'] . '.php';
-
-    if ($cenaAtual->temTeste()) {
-        $valorAtributo = $personagem->getAtributo($cenaAtual->atributoTeste);
-        $numeroFinal = $dado->testar($valorAtributo);
-        $_SESSION['cena'] = $cenaAtual->resultadosDado[$numeroFinal];
-    }
-
+if (isset($_POST['rolar']) && $cena->temTeste()) {
+    $valorAtributo = $personagem->getAtributo($cena->atributoTeste);
+    $numeroFinal = $dado->testar($valorAtributo);
+    $_SESSION['cena'] = $cena->resultadosDado[$numeroFinal];
     header('Location: index.php');
     exit;
 }
-// Cena atual
-$cena = include __DIR__ . '/Cenas/' . $_SESSION['cena'] . '.php';
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -113,7 +118,7 @@ $cena = include __DIR__ . '/Cenas/' . $_SESSION['cena'] . '.php';
     <img class="imagem-cena" src="<?= $cena->imagem ?>" alt="">
 
     <div class="caixa-texto">
-        <?= nl2br($cena->texto) ?>
+        <?= $cena->texto ?>
     </div>
 
     <?php if ($cena->temTeste()): ?>
@@ -125,8 +130,7 @@ $cena = include __DIR__ . '/Cenas/' . $_SESSION['cena'] . '.php';
     <?php elseif ($cena->proxima !== null): ?>
         <div class="acao">
             <form method="post">
-                <input type="hidden" name="ir" value="<?= $cena->proxima ?>">
-                <button type="submit">Continuar</button>
+                <button type="submit" name="continuar" value="1">Continuar</button>
             </form>
         </div>
     <?php else: ?>

@@ -60,3 +60,64 @@ body {
 .acao form button:hover {
     background: #4a4a4a;
 }
+
+/* Tela de criação de personagem */
+.tela-criacao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tela-criacao .caixa-texto {
+    position: static;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.tela-criacao h2 {
+    margin-top: 0;
+}
+
+.tela-criacao form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.tela-criacao label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.tela-criacao input[type="number"] {
+    width: 60px;
+    padding: 6px;
+    background: #222;
+    color: #eee;
+    border: 1px solid #555;
+    border-radius: 4px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.tela-criacao button[type="submit"] {
+    margin-top: 8px;
+    padding: 12px;
+    background: #333;
+    color: #eee;
+    border: 1px solid #555;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.tela-criacao button[type="submit"]:hover {
+    background: #4a4a4a;
+}
+
+.tela-criacao .erro {
+    color: #ff6b6b;
+}

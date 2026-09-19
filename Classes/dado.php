@@ -1,4 +1,8 @@
 <?php
+if (!defined('GAYME')) {
+    http_response_code(403);
+    exit('Acesso direto nao permitido.');
+}
 
 class Dado
 {
