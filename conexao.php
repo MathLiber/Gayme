@@ -1,14 +1,21 @@
 <?php
+if (!defined('GAYME')) {
+    http_response_code(403);
+    exit('Acesso direto nao permitido.');
+}
 
 $servername = 'localhost';
 $username = 'root';
-$senha = "";
-$db = "aw2-2";
+$senha = '';
+$db = 'aw2-2';
+
+$conn = null;
 $erro = null;
+
 try {
-    $conn = new PDO("mysql:host=$servername;dbname=$db", $username, $senha);
-    $conn -> setAttribute(PDO::ATTR_ERRMODE, pdo::ERRMODE_EXCEPTION);
+    $conn = new PDO("mysql:host=$servername;dbname=$db;charset=utf8mb4", $username, $senha);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $ex) {
-        $erro = $ex -> getMessage();
-        echo $erro;
+    $erro = $ex->getMessage();
+    $conn = null;
 }

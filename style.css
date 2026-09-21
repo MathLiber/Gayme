@@ -63,6 +63,9 @@ body {
 
 /* Tela de criação de personagem */
 .tela-criacao {
+    height: auto;
+    overflow: visible;
+    padding: 20px 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -76,6 +79,16 @@ body {
 
 .tela-criacao h2 {
     margin-top: 0;
+}
+
+.criacao-conteudo {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.criacao-form {
+    flex: 1 1 55%;
 }
 
 .tela-criacao form {
@@ -92,15 +105,22 @@ body {
     gap: 12px;
 }
 
-.tela-criacao input[type="number"] {
-    width: 60px;
+.tela-criacao input[type="text"], .tela-criacao input[type="number"] {
     padding: 6px;
     background: #222;
     color: #eee;
     border: 1px solid #555;
     border-radius: 4px;
     font-size: 1rem;
+}
+
+.tela-criacao input[type="number"] {
+    width: 60px;
     text-align: center;
+}
+
+.tela-criacao input[type="text"] {
+    width: 160px;
 }
 
 .tela-criacao button[type="submit"] {
@@ -120,4 +140,40 @@ body {
 
 .tela-criacao .erro {
     color: #ff6b6b;
+}
+
+/* Ranking na tela de criação */
+.ranking-painel {
+    flex: 1 1 45%;
+}
+
+.ranking-painel h3 {
+    margin-top: 0;
+}
+
+.ranking-painel table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.ranking-painel th, .ranking-painel td {
+    padding: 5px 8px;
+    border-bottom: 1px solid #333;
+    text-align: left;
+}
+
+.ranking-painel th:first-child, .ranking-painel td:first-child {
+    width: 22px;
+    text-align: center;
+}
+
+.ranking-painel th:last-child, .ranking-painel td:last-child {
+    text-align: right;
+}
+
+.pontuacao-final {
+    text-align: center;
+    font-size: 1.1rem;
+    margin: 0 0 10px;
 }

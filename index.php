@@ -14,27 +14,38 @@ if (isset($_POST['reiniciar'])) {
     exit;
 }
 
-// Criação de personagem
+
 if (!isset($_SESSION['personagem'])) {
 
     $erroDistribuicao = null;
 
     if (isset($_POST['criar_personagem'])) {
+        $jogador = trim((string) ($_POST['jogador'] ?? ''));
         $observacao = (int) ($_POST['observacao'] ?? 0);
         $destreza = (int) ($_POST['destreza'] ?? 0);
         $forca = (int) ($_POST['forca'] ?? 0);
         $soma = $observacao + $destreza + $forca;
 
-        if ($soma <= 5 && $observacao >= 0 && $destreza >= 0 && $forca >= 0) {
+        if ($jogador === '') {
+            $erroDistribuicao = 'Digite um nome (ele aparece no ranking).';
+        } elseif ($soma > 5 || $observacao < 0 || $destreza < 0 || $forca < 0) {
+            $erroDistribuicao = 'A soma dos pontos não pode passar de 5.';
+        } else {
             $personagem = new Personagem($observacao, $destreza, $forca);
             $_SESSION['personagem'] = $personagem->paraArray();
+            $_SESSION['jogador'] = $jogador;
+            $_SESSION['pontuacao'] = 0;
             $_SESSION['cena'] = 'apresentacao_c1';
             header('Location: index.php');
             exit;
         }
-
-        $erroDistribuicao = 'A soma dos pontos não pode passar de 5.';
     }
+
+    
+    require __DIR__ . '/conexao.php';
+    require __DIR__ . '/Classes/Ranking.php';
+    $ranking = new Ranking($conn);
+    $melhores = $ranking->melhores(10);
     ?>
     <!DOCTYPE html>
     <html lang="pt-br">
@@ -46,6 +57,8 @@ if (!isset($_SESSION['personagem'])) {
     <body>
         <div class="tela tela-criacao">
             <div class="caixa-texto">
+                <div class="criacao-conteudo">
+                <div class="criacao-form">
                 <h2>Distribua seus atributos</h2>
                 <p>Você tem <strong>5 pontos</strong> pra distribuir entre Observação, Destreza e Força.</p>
 
@@ -54,6 +67,9 @@ if (!isset($_SESSION['personagem'])) {
                 <?php endif; ?>
 
                 <form method="post">
+                    <label>Seu nome (aparece no ranking)
+                        <input type="text" name="jogador" maxlength="40" value="<?= $jogador ?? '' ?>">
+                    </label>
                     <label>Observação
                         <input type="number" name="observacao" min="0" max="5" value="0">
                     </label>
@@ -65,6 +81,26 @@ if (!isset($_SESSION['personagem'])) {
                     </label>
                     <button type="submit" name="criar_personagem" value="1">Começar jogo</button>
                 </form>
+                </div>
+
+                <div class="ranking-painel">
+                    <h3>Melhores pontuações</h3>
+                    <table>
+                        <thead>
+                            <tr><th>#</th><th>Nome</th><th>Pontos</th></tr>
+                        </thead>
+                        <tbody>
+                            <?php for ($i = 0; $i < 10; $i++): ?>
+                                <tr>
+                                    <td><?= $i + 1 ?></td>
+                                    <td><?= $melhores[$i]['nome'] ?? '-' ?></td>
+                                    <td><?= $melhores[$i]['pontos'] ?? '-' ?></td>
+                                </tr>
+                            <?php endfor; ?>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
             </div>
         </div>
     </body>
@@ -88,20 +124,39 @@ if (!is_file(__DIR__ . '/Cenas/' . $nomeCena . '.php')) {
 
 $cena = include __DIR__ . '/Cenas/' . $nomeCena . '.php';
 
-// Botão Continuar
+
 if (isset($_POST['continuar']) && $cena->proxima !== null) {
     $_SESSION['cena'] = $cena->proxima;
     header('Location: index.php');
     exit;
 }
 
-// Botão Rolar
+
 if (isset($_POST['rolar']) && $cena->temTeste()) {
     $valorAtributo = $personagem->getAtributo($cena->atributoTeste);
     $numeroFinal = $dado->testar($valorAtributo);
+
+    if ($numeroFinal <= 2) {
+        $_SESSION['pontuacao'] = ($_SESSION['pontuacao'] ?? 0) - 50;
+    } elseif ($numeroFinal <= 4) {
+        $_SESSION['pontuacao'] = ($_SESSION['pontuacao'] ?? 0) + 30;
+    } else {
+        $_SESSION['pontuacao'] = ($_SESSION['pontuacao'] ?? 0) + 50;
+    }
+
     $_SESSION['cena'] = $cena->resultadosDado[$numeroFinal];
     header('Location: index.php');
     exit;
+}
+
+
+if ($cena->ehFinal() && !isset($_SESSION['pontuacao_salva'])) {
+    require __DIR__ . '/conexao.php';
+    require __DIR__ . '/Classes/Ranking.php';
+
+    $ranking = new Ranking($conn);
+    $ranking->salvar($_SESSION['jogador'] ?? 'Jogador', $_SESSION['pontuacao'] ?? 0);
+    $_SESSION['pontuacao_salva'] = true;
 }
 
 ?>
@@ -136,6 +191,7 @@ if (isset($_POST['rolar']) && $cena->temTeste()) {
     <?php else: ?>
         <!-- sem próxima cena e sem teste -->
         <div class="acao">
+            <p class="pontuacao-final">Pontuação final: <?= $_SESSION['pontuacao'] ?? 0 ?></p>
             <form method="post">
                 <button type="submit" name="reiniciar" value="1">Reiniciar</button>
             </form>
