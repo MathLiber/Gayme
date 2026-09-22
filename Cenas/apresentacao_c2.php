@@ -2,15 +2,7 @@
 require_once __DIR__ . '/../Classes/Cena.php';
 
 return new Cena(
-    imagem: 'img/cena02.jpg',
-    texto: 'Uma faca enferrujada está cravada no batente da porta. Você tenta arrancá-la (Destreza).',
-    atributoTeste: 'destreza',
-    resultadosDado: [
-        1 => 'des1_result1',
-        2 => 'des1_result1',
-        3 => 'des1_result2',
-        4 => 'des1_result2',
-        5 => 'des1_result3',
-        6 => 'des1_result3',
-    ]
+    imagem: 'img/Exported picture (2).jpg',
+    texto: 'Cidade de Londres, Inglaterra 1838. É um dia nublado, as nuvens estão carregadas e escuras, a cidade é coberta por uma neblina. O sino da catedral bate, ecoando pelas ruas, marcando a aproximação da noite.',
+    proxima: 'apresentacao_c3'
 );

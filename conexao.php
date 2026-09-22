@@ -7,7 +7,7 @@ if (!defined('GAYME')) {
 $servername = 'localhost';
 $username = 'root';
 $senha = '';
-$db = 'aw2-2';
+$db = 'aw2_2';
 
 $conn = null;
 $erro = null;

@@ -21,17 +21,16 @@ if (!isset($_SESSION['personagem'])) {
 
     if (isset($_POST['criar_personagem'])) {
         $jogador = trim((string) ($_POST['jogador'] ?? ''));
-        $observacao = (int) ($_POST['observacao'] ?? 0);
         $destreza = (int) ($_POST['destreza'] ?? 0);
         $forca = (int) ($_POST['forca'] ?? 0);
-        $soma = $observacao + $destreza + $forca;
+        $soma = $destreza + $forca;
 
         if ($jogador === '') {
             $erroDistribuicao = 'Digite um nome (ele aparece no ranking).';
-        } elseif ($soma > 5 || $observacao < 0 || $destreza < 0 || $forca < 0) {
-            $erroDistribuicao = 'A soma dos pontos não pode passar de 5.';
+        } elseif ($soma > 3 || $destreza < 0 || $forca < 0) {
+            $erroDistribuicao = 'A soma dos pontos não pode passar de 3.';
         } else {
-            $personagem = new Personagem($observacao, $destreza, $forca);
+            $personagem = new Personagem($destreza, $forca);
             $_SESSION['personagem'] = $personagem->paraArray();
             $_SESSION['jogador'] = $jogador;
             $_SESSION['pontuacao'] = 0;
@@ -60,7 +59,7 @@ if (!isset($_SESSION['personagem'])) {
                 <div class="criacao-conteudo">
                 <div class="criacao-form">
                 <h2>Distribua seus atributos</h2>
-                <p>Você tem <strong>5 pontos</strong> pra distribuir entre Observação, Destreza e Força.</p>
+                <p>Você tem <strong>3 pontos</strong> pra distribuir entre Observação, Destreza e Força.</p>
 
                 <?php if ($erroDistribuicao): ?>
                     <p class="erro"><?= $erroDistribuicao ?></p>
@@ -70,14 +69,11 @@ if (!isset($_SESSION['personagem'])) {
                     <label>Seu nome (aparece no ranking)
                         <input type="text" name="jogador" maxlength="40" value="<?= $jogador ?? '' ?>">
                     </label>
-                    <label>Observação
-                        <input type="number" name="observacao" min="0" max="5" value="0">
-                    </label>
                     <label>Destreza
-                        <input type="number" name="destreza" min="0" max="5" value="0">
+                        <input type="number" name="destreza" min="0" max="3" value="0">
                     </label>
                     <label>Força
-                        <input type="number" name="forca" min="0" max="5" value="0">
+                        <input type="number" name="forca" min="0" max="3" value="0">
                     </label>
                     <button type="submit" name="criar_personagem" value="1">Começar jogo</button>
                 </form>
@@ -137,7 +133,7 @@ if (isset($_POST['rolar']) && $cena->temTeste()) {
     $numeroFinal = $dado->testar($valorAtributo);
 
     if ($numeroFinal <= 2) {
-        $_SESSION['pontuacao'] = ($_SESSION['pontuacao'] ?? 0) - 50;
+        $_SESSION['pontuacao'] = ($_SESSION['pontuacao'] ?? 0) - 100;
     } elseif ($numeroFinal <= 4) {
         $_SESSION['pontuacao'] = ($_SESSION['pontuacao'] ?? 0) + 30;
     } else {

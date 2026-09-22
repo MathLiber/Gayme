@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../Classes/Cena.php';
 
 return new Cena(
-    imagem: 'img/Nome Introdução.jpg',
+    imagem: 'img/Exported picture (14).jpg',
     texto: '',
-    proxima: 'apresentacao_c2'
+    proxima: 'apresentacao_c12'
 );
